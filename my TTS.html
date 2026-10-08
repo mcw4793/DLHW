@@ -1,0 +1,777 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>English Translation & Accent Audio</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f1ea;
+            margin: 0;
+            padding: 40px 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+            background-color: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 180px;
+            padding: 18px;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            resize: vertical;
+            outline: none;
+            font-family: Arial, sans-serif;
+        }
+
+        textarea:focus {
+            border-color: #999;
+        }
+
+        .translate-button {
+            display: block;
+            margin: 20px auto;
+            padding: 14px 35px;
+            font-size: 17px;
+            border: none;
+            border-radius: 12px;
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+        }
+
+        .translate-button:hover {
+            background-color: #555;
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f7f7f7;
+            border-radius: 15px;
+            min-height: 100px;
+        }
+
+        .result-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        #translationResult {
+            font-size: 20px;
+            line-height: 1.6;
+        }
+
+        .audio-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .audio-box {
+            flex: 1;
+            min-width: 280px;
+            padding: 25px;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            background-color: #fafafa;
+            text-align: center;
+        }
+
+        .audio-box h2 {
+            margin-top: 0;
+            font-size: 21px;
+        }
+
+        .audio-box p {
+            color: #777;
+        }
+
+        .play-button {
+            padding: 13px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+        }
+
+        .play-button:hover {
+            background-color: #555;
+        }
+
+        .stop-button {
+            display: block;
+            margin: 25px auto 0;
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            background-color: #aaa;
+            color: white;
+            cursor: pointer;
+        }
+
+        .stop-button:hover {
+            background-color: #888;
+        }
+
+        #status {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            min-height: 25px;
+        }
+
+        .info {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #f7f7f7;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .loading {
+            color: #777;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <h1>🎧 English Audio Translator</h1>
+
+    <p class="description">
+        Type Korean or English and listen to it in American or British English.
+    </p>
+
+
+    <!-- Input -->
+
+    <div class="section-title">
+        ✏️ Enter your text
+    </div>
+
+    <textarea
+        id="textInput"
+        placeholder="한국어 또는 영어를 입력하세요...&#10;&#10;예: 나는 오늘 학교에 갔다.">
+    </textarea>
+
+
+    <!-- Translate -->
+
+    <button
+        class="translate-button"
+        onclick="translateText()">
+
+        🌎 Translate to English
+
+    </button>
+
+
+    <!-- Translation result -->
+
+    <div class="result-box">
+
+        <div class="result-title">
+            🇬🇧 English Translation
+        </div>
+
+        <div id="translationResult">
+            Your English translation will appear here.
+        </div>
+
+    </div>
+
+
+    <!-- Audio buttons -->
+
+    <div class="audio-container">
+
+
+        <!-- American -->
+
+        <div class="audio-box">
+
+            <h2>🇺🇸 American English</h2>
+
+            <p>
+                Listen with an American accent
+            </p>
+
+            <button
+                class="play-button"
+                onclick="speakText('american')">
+
+                🔊 Play American
+
+            </button>
+
+        </div>
+
+
+        <!-- British -->
+
+        <div class="audio-box">
+
+            <h2>🇬🇧 British English</h2>
+
+            <p>
+                Listen with a British accent
+            </p>
+
+            <button
+                class="play-button"
+                onclick="speakText('british')">
+
+                🔊 Play British
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- Stop -->
+
+    <button
+        class="stop-button"
+        onclick="stopAudio()">
+
+        ⏹ Stop Audio
+
+    </button>
+
+
+    <div id="status">
+        Ready
+    </div>
+
+
+    <div class="info">
+
+        💡 You can enter Korean or English.
+        Korean text will be translated into English first,
+        and then you can listen to the translation in
+        American or British English.
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+    // ==========================================
+    // Voice settings
+    // ==========================================
+
+    let voices = [];
+
+    let translatedText = "";
+
+
+    function loadVoices() {
+
+        voices = speechSynthesis.getVoices();
+
+    }
+
+
+    speechSynthesis.onvoiceschanged = loadVoices;
+
+    loadVoices();
+
+
+
+    // ==========================================
+    // Detect Korean
+    // ==========================================
+
+    function containsKorean(text) {
+
+        return /[\uAC00-\uD7A3]/.test(text);
+
+    }
+
+
+
+    // ==========================================
+    // Translate Korean -> English
+    // ==========================================
+
+    async function translateText() {
+
+        const input =
+            document
+                .getElementById("textInput")
+                .value
+                .trim();
+
+
+        const result =
+            document.getElementById("translationResult");
+
+        const status =
+            document.getElementById("status");
+
+
+        // Empty input
+
+        if (input === "") {
+
+            result.textContent =
+                "Please enter some text first.";
+
+            status.textContent =
+                "⚠️ No text entered.";
+
+            return;
+
+        }
+
+
+        // English input
+
+        if (!containsKorean(input)) {
+
+            translatedText = input;
+
+            result.textContent = input;
+
+            status.textContent =
+                "✅ English text is ready for audio.";
+
+            return;
+
+        }
+
+
+        // Show loading
+
+        result.innerHTML =
+            '<span class="loading">Translating...</span>';
+
+        status.textContent =
+            "🌎 Translating Korean into English...";
+
+
+        try {
+
+            /*
+                MyMemory Translation API
+
+                Korean -> English
+            */
+
+            const url =
+                "https://api.mymemory.translated.net/get" +
+                "?q=" +
+                encodeURIComponent(input) +
+                "&langpair=ko|en";
+
+
+            const response =
+                await fetch(url);
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Translation request failed."
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !data.responseData ||
+                !data.responseData.translatedText
+            ) {
+
+                throw new Error(
+                    "No translation returned."
+                );
+
+            }
+
+
+            translatedText =
+                data.responseData.translatedText;
+
+
+            result.textContent =
+                translatedText;
+
+
+            status.textContent =
+                "✅ Translation complete. Choose an accent to listen.";
+
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+
+            translatedText = "";
+
+
+            result.textContent =
+                "Translation failed. Please try again.";
+
+
+            status.textContent =
+                "❌ Could not translate the text.";
+
+        }
+
+    }
+
+
+
+    // ==========================================
+    // Find voice
+    // ==========================================
+
+    function findVoice(accent) {
+
+        if (voices.length === 0) {
+
+            voices = speechSynthesis.getVoices();
+
+        }
+
+
+        // American English
+
+        if (accent === "american") {
+
+            let voice =
+                voices.find(function(voice) {
+
+                    return voice.lang === "en-US";
+
+                });
+
+
+            if (voice) {
+
+                return voice;
+
+            }
+
+
+            voice =
+                voices.find(function(voice) {
+
+                    return voice.lang
+                        .toLowerCase()
+                        .includes("en-us");
+
+                });
+
+
+            if (voice) {
+
+                return voice;
+
+            }
+
+        }
+
+
+        // British English
+
+        if (accent === "british") {
+
+            let voice =
+                voices.find(function(voice) {
+
+                    return voice.lang === "en-GB";
+
+                });
+
+
+            if (voice) {
+
+                return voice;
+
+            }
+
+
+            voice =
+                voices.find(function(voice) {
+
+                    return voice.lang
+                        .toLowerCase()
+                        .includes("en-gb");
+
+                });
+
+
+            if (voice) {
+
+                return voice;
+
+            }
+
+        }
+
+
+        // Fallback
+
+        return voices.find(function(voice) {
+
+            return voice.lang
+                .toLowerCase()
+                .startsWith("en");
+
+        }) || null;
+
+    }
+
+
+
+    // ==========================================
+    // Play audio
+    // ==========================================
+
+    function speakText(accent) {
+
+        const input =
+            document
+                .getElementById("textInput")
+                .value
+                .trim();
+
+
+        if (input === "") {
+
+            document.getElementById("status").textContent =
+                "⚠️ Please enter some text first.";
+
+            return;
+
+        }
+
+
+        /*
+            If the user entered Korean but
+            hasn't translated it yet,
+            automatically translate first.
+        */
+
+        if (containsKorean(input) &&
+            translatedText === "") {
+
+            document.getElementById("status").textContent =
+                "🌎 Please click Translate to English first.";
+
+            return;
+
+        }
+
+
+        /*
+            If English was entered,
+            use it directly.
+        */
+
+        if (!containsKorean(input)) {
+
+            translatedText = input;
+
+        }
+
+
+        // Stop previous audio
+
+        speechSynthesis.cancel();
+
+
+        // Create speech
+
+        const utterance =
+            new SpeechSynthesisUtterance(
+                translatedText
+            );
+
+
+        // Find appropriate voice
+
+        const voice =
+            findVoice(accent);
+
+
+        if (voice) {
+
+            utterance.voice = voice;
+
+            utterance.lang = voice.lang;
+
+        }
+
+        else {
+
+            if (accent === "american") {
+
+                utterance.lang = "en-US";
+
+            }
+
+            else {
+
+                utterance.lang = "en-GB";
+
+            }
+
+        }
+
+
+        // Speaking speed
+
+        utterance.rate = 0.9;
+
+        utterance.pitch = 1;
+
+
+        // Start
+
+        utterance.onstart = function() {
+
+            if (accent === "american") {
+
+                document.getElementById("status").textContent =
+                    "🔊 Playing American English...";
+
+            }
+
+            else {
+
+                document.getElementById("status").textContent =
+                    "🔊 Playing British English...";
+
+            }
+
+        };
+
+
+        // Finish
+
+        utterance.onend = function() {
+
+            document.getElementById("status").textContent =
+                "✅ Finished.";
+
+        };
+
+
+        // Error
+
+        utterance.onerror = function() {
+
+            document.getElementById("status").textContent =
+                "❌ Could not play the audio.";
+
+        };
+
+
+        // Play
+
+        speechSynthesis.speak(utterance);
+
+    }
+
+
+
+    // ==========================================
+    // Stop
+    // ==========================================
+
+    function stopAudio() {
+
+        speechSynthesis.cancel();
+
+        document.getElementById("status").textContent =
+            "⏹ Audio stopped.";
+
+    }
+
+
+
+    // ==========================================
+    // Clear translation when input changes
+    // ==========================================
+
+    document
+        .getElementById("textInput")
+        .addEventListener("input", function() {
+
+            translatedText = "";
+
+            document.getElementById("translationResult").textContent =
+                "Your English translation will appear here.";
+
+        });
+
+
+</script>
+
+</body>
+
+</html>
+```
